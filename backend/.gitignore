@@ -1,0 +1,4 @@
+# node models
+node_modules
+# environment
+.env*
