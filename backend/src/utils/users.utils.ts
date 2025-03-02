@@ -10,7 +10,6 @@ interface Errors {
 export const MAX_AGE = 60 * 60 * 24;
 // error handler
 export const errorHandler = (err: any): Errors => {
-  console.log(err);
   const errors: Errors = {};
   // field errors
   if (err?.message === "password required") {
