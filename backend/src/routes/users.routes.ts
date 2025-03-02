@@ -10,11 +10,14 @@ import {
   isAuthenticated,
 } from "../controllers/users.controllers";
 
+// middlewares
+import protectedRoutes from "../middlewares/users.middleware";
+
 // router
 const router = Router();
 
 // get all users
-router.get("/", (req: Request, res: Response) => {
+router.get("/", protectedRoutes(), (req: Request, res: Response) => {
   getAllUsers(req, res);
 });
 
@@ -34,9 +37,13 @@ router.get("/logout", (req: Request, res: Response) => {
 });
 
 // is authenticated
-router.get("/is-authenticated", (req: Request, res: Response) => {
-  isAuthenticated(req, res);
-});
+router.get(
+  "/is-authenticated",
+  protectedRoutes(),
+  (req: Request, res: Response) => {
+    isAuthenticated(req, res);
+  }
+);
 
 // exports
 export default router;
