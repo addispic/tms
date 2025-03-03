@@ -7,7 +7,6 @@ import { RootState } from "../store";
 import { PiUser } from "react-icons/pi";
 import { AiOutlineMail } from "react-icons/ai";
 import { MdLockOutline } from "react-icons/md";
-import { IoMdCloseCircle } from "react-icons/io";
 
 // utils
 import { FormFieldSchema } from "../utils/schema";
@@ -126,10 +125,11 @@ class Authentication extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     if (!prevProps.user && this.props.user) {
+      console.log("hello update");
       this.props.navigate("/");
     }
   }
-
+  
   render(): ReactNode {
     return (
       <div className="w-screen h-screen overflow-hidden flex items-center justify-center">
@@ -143,22 +143,7 @@ class Authentication extends Component<Props, State> {
             />
           </div>
           {/* form */}
-          <div className="p-5 relative">
-            {/* error */}
-
-            <div
-              className={`absolute right-3 top-3 z-30 p-1.5 bg-neutral-100 rounded-md text-sm text-red-500 flex items-center gap-x-3 border border-red-500 transition-transform ease-in-out duration-150 ${
-                this.props.error ? "scale-100" : "scale-0"
-              }`}
-            >
-              <p>{this.props.error?.message}</p>
-              <button onClick={()=>{
-                this.props.resetError()
-              }}>
-                <IoMdCloseCircle className="text-xl cursor-pointer" />
-              </button>
-            </div>
-
+          <div className="p-5">
             {/* header */}
             <header>
               <h3 className="text-neutral-500 text-lg my-3">
@@ -175,7 +160,8 @@ class Authentication extends Component<Props, State> {
               <div className="mb-2.5">
                 <div
                   className={`flex items-center gap-x-1.5 pb-1 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-neutral-300 after:z-0 before:absolute before:left-0 before:bottom-0 before:h-[1px] before:z-10 before:transition-all before:ease-in-out duration-1000 ${
-                    this.state.errors?.username?.length
+                    this.state.errors?.username?.length ||
+                    this.props.error?.flag === "username"
                       ? "before:w-full before:bg-red-500"
                       : this.state.focus === "username" || this.state.username
                       ? "before:w-full before:bg-green-500"
@@ -184,7 +170,8 @@ class Authentication extends Component<Props, State> {
                 >
                   <PiUser
                     className={`transition-colors ease-in-out duration-300 ${
-                      this.state.errors?.username?.length
+                      this.state.errors?.username?.length ||
+                      this.props.error?.flag === "username"
                         ? "text-red-500"
                         : this.state.focus === "username" || this.state.username
                         ? "text-green-600"
@@ -197,6 +184,7 @@ class Authentication extends Component<Props, State> {
                     placeholder="Username"
                     value={this.state.username}
                     onChange={(e) => {
+                      this.props.resetError();
                       this.setState((prev) => {
                         return {
                           ...prev,
@@ -227,20 +215,23 @@ class Authentication extends Component<Props, State> {
                   />
                 </div>
                 {/* errors */}
-                {this.state.errors?.username?.length && (
-                  <div className="text-sm text-red-500">
-                    {this.state.errors?.username?.map((err) => (
-                      <p key={err}>{err}</p>
-                    ))}
-                  </div>
-                )}
+                {this.state.errors?.username?.length ||
+                  (this.props.error?.flag === "username" && (
+                    <div className="text-sm text-red-500">
+                      <p>{this.props.error.message}</p>
+                      {this.state.errors?.username?.map((err) => (
+                        <p key={err}>{err}</p>
+                      ))}
+                    </div>
+                  ))}
               </div>
               {/* email */}
               {this.props.formId === "signup" && (
                 <div className="mb-2.5">
                   <div
                     className={`flex items-center gap-x-1.5 pb-1 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-neutral-300 after:z-0 before:absolute before:left-0 before:bottom-0 before:h-[1px] before:z-10 before:transition-all before:ease-in-out duration-1000 ${
-                      this.state.errors?.email?.length
+                      this.state.errors?.email?.length ||
+                      this.props.error?.flag === "email"
                         ? "before:w-full before:bg-red-500"
                         : this.state.focus === "email" || this.state.email
                         ? "before:w-full before:bg-green-500"
@@ -249,7 +240,8 @@ class Authentication extends Component<Props, State> {
                   >
                     <AiOutlineMail
                       className={`transition-colors ease-in-out duration-300 ${
-                        this.state.errors?.email?.length
+                        this.state.errors?.email?.length ||
+                        this.props.error?.flag === "email"
                           ? "text-red-500"
                           : this.state.focus === "email" || this.state.email
                           ? "text-green-600"
@@ -262,6 +254,7 @@ class Authentication extends Component<Props, State> {
                       placeholder="Email"
                       value={this.state.email}
                       onChange={(e) => {
+                        this.props.resetError();
                         this.setState((prev) => {
                           return {
                             ...prev,
@@ -292,20 +285,23 @@ class Authentication extends Component<Props, State> {
                     />
                   </div>
                   {/* errors */}
-                  {this.state.errors?.email?.length && (
-                    <div className="text-sm text-red-500">
-                      {this.state.errors?.email?.map((err) => (
-                        <p key={err}>{err}</p>
-                      ))}
-                    </div>
-                  )}
+                  {this.state.errors?.email?.length ||
+                    (this.props.error?.flag === "email" && (
+                      <div className="text-sm text-red-500">
+                        <p>{this.props.error?.message}</p>
+                        {this.state.errors?.email?.map((err) => (
+                          <p key={err}>{err}</p>
+                        ))}
+                      </div>
+                    ))}
                 </div>
               )}
               {/* password */}
               <div className="mb-2.5">
                 <div
                   className={`flex items-center gap-x-1.5 pb-1 relative after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-neutral-300 after:z-0 before:absolute before:left-0 before:bottom-0 before:h-[1px] before:z-10 before:transition-all before:ease-in-out duration-1000 ${
-                    this.state.errors?.password?.length
+                    this.state.errors?.password?.length ||
+                    this.props.error?.flag === "password"
                       ? "before:w-full before:bg-red-500"
                       : this.state.focus === "password" || this.state.password
                       ? "before:w-full before:bg-green-500"
@@ -314,7 +310,8 @@ class Authentication extends Component<Props, State> {
                 >
                   <MdLockOutline
                     className={`transition-colors ease-in-out duration-300 ${
-                      this.state.errors?.password?.length
+                      this.state.errors?.password?.length ||
+                      this.props.error?.flag === "password"
                         ? "text-red-500"
                         : this.state.focus === "password" || this.state.password
                         ? "text-green-600"
@@ -327,6 +324,7 @@ class Authentication extends Component<Props, State> {
                     placeholder="Password"
                     value={this.state.password}
                     onChange={(e) => {
+                      this.props.resetError();
                       this.setState((prev) => {
                         return {
                           ...prev,
@@ -357,13 +355,15 @@ class Authentication extends Component<Props, State> {
                   />
                 </div>
                 {/* errors */}
-                {this.state.errors?.password?.length && (
-                  <div className="text-sm text-red-500">
-                    {this.state.errors?.password?.map((err) => (
-                      <p key={err}>{err}</p>
-                    ))}
-                  </div>
-                )}
+                {this.state.errors?.password?.length ||
+                  (this.props.error?.flag === "password" && (
+                    <div className="text-sm text-red-500">
+                      <p>{this.props.error?.message}</p>
+                      {this.state.errors?.password?.map((err) => (
+                        <p key={err}>{err}</p>
+                      ))}
+                    </div>
+                  ))}
               </div>
               {/* button */}
               <div className="my-5">

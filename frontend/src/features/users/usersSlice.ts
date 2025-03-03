@@ -25,7 +25,33 @@ export const login = createAsyncThunk(
 export const signup = createAsyncThunk(
   "users/signup",
   async (data: { username: string; email: string; password: string }) => {
-    console.log(data);
+    try {
+      const response = await axios.post("/api/users/signup", data);
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        return err.response?.data;
+      } else {
+        return { error: "user signup failed" };
+      }
+    }
+  }
+);
+
+// is authenticated
+export const isAuthenticated = createAsyncThunk(
+  "users/isAuthenticated",
+  async () => {
+    try {
+      const response = await axios.get("/api/users/is-authenticated");
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        return err.response?.data;
+      } else {
+        return { error: "is authentication failed" };
+      }
+    }
   }
 );
 
@@ -50,15 +76,19 @@ export type IError = {
 interface IInitialState {
   formId: "login" | "signup";
   isFormSubmitting: boolean;
+  isAuthenticating: boolean;
   user: IUser | null;
   error: IError | null;
 }
+
+const localUser = localStorage.getItem("user");
 
 // initial state
 const initialState: IInitialState = {
   formId: "login",
   isFormSubmitting: false,
-  user: null,
+  isAuthenticating: false,
+  user: localUser ? JSON.parse(localUser) : null,
   error: null,
 };
 
@@ -86,6 +116,7 @@ const usersSlice = createSlice({
         if (action.payload.user) {
           state.error = null;
           state.user = action.payload.user;
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
         }
         if (action.payload.errors) {
           state.user = null;
@@ -104,6 +135,51 @@ const usersSlice = createSlice({
       })
       .addCase(login.rejected, (state) => {
         state.isFormSubmitting = false;
+      })
+      // signup
+      .addCase(signup.pending, (state) => {
+        state.isFormSubmitting = true;
+      })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.isFormSubmitting = false;
+        if (action.payload.newUser) {
+          state.user = action.payload.newUser;
+          localStorage.setItem("user", JSON.stringify(action.payload.newUser));
+          state.error = null;
+        }
+        if (action.payload.errors?.username) {
+          state.error = {
+            flag: "username",
+            message: action.payload.errors.username,
+          };
+        } else if (action.payload.errors?.email) {
+          state.error = {
+            flag: "email",
+            message: action.payload.errors.email,
+          };
+        } else if (action.payload.errors?.password) {
+          state.error = {
+            flag: "password",
+            message: action.payload.errors.password,
+          };
+        }
+      })
+      .addCase(signup.rejected, (state) => {
+        state.isFormSubmitting = false;
+      })
+      // is authenticating
+      .addCase(isAuthenticated.pending, (state) => {
+        state.isAuthenticating = true;
+      })
+      .addCase(isAuthenticated.fulfilled, (state, action) => {
+        state.isAuthenticating = false;
+        if (action.payload.user) {
+          state.user = action.payload.user;
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
+        }
+      })
+      .addCase(isAuthenticated.rejected, (state) => {
+        state.isAuthenticating = false;
       });
   },
 });
@@ -115,6 +191,8 @@ export const { formIdToggler, resetError } = usersSlice.actions;
 export const formIdSelector = (state: RootState) => state.users.formId;
 export const isFormSubmittingSelector = (state: RootState) =>
   state.users.isFormSubmitting;
+export const isAuthenticatingSelector = (state: RootState) =>
+  state.users.isAuthenticating;
 export const errorSelector = (state: RootState) => state.users.error;
 export const userSelector = (state: RootState) => state.users.user;
 // reducer
