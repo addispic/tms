@@ -6,6 +6,8 @@ import { IoMdMore } from "react-icons/io";
 import { TbListDetails } from "react-icons/tb";
 import { AiOutlineEdit } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { LuClockArrowUp } from "react-icons/lu";
+import { IoMdClose } from "react-icons/io";
 // hooks
 import { useAppSelector, useAppDispatch } from "../hooks";
 // slices
@@ -231,9 +233,21 @@ export default function Tickets() {
       </div>
       {isTicketOn && moreOptions.selected === "Detail" && (
         <div className="fixed left-0 top-0 w-screen h-screen z-[100] overflow-hidden bg-black/50 flex items-center justify-center">
-          <div className="w-96 rounded-md overflow-hidden bg-white flex items-center">
+          <div className="w-[27rem] rounded-md overflow-hidden bg-white flex items-center relative">
+            {/* close detail */}
+            <button className="absolute top-1 left-1 w-5 aspect-square rounded-sm bg-neutral-100 text-neutral-500 flex items-center justify-center transition-colors ease-in-out duration-200 hover:bg-red-200 hover:text-red-500 cursor-pointer" onClick={()=>{
+              setIsTicketOn(null)
+              setMoreOptions(prev =>{
+                return {
+                  ...prev,
+                  selected: "",
+                }
+              })
+            }}>
+              <IoMdClose />
+            </button>
             {/* author detail */}
-            <div className="w-[35%] bg-neutral-50 pb-3">
+            <div className="w-[35%] pb-3 self-start">
               {/* profile */}
               <div>
                 {/* bg */}
@@ -268,12 +282,12 @@ export default function Tickets() {
               </div>
             </div>
             {/* ticket detail */}
-            <div className="flex-1 shrink-0 p-1.5 self-start">
-              <div className="text-sm text-neutral-500 pb-1.5 border-b border-neutral-100">
+            <div className="flex-1 shrink-0 p-1.5 ml-3 border-l border-neutral-200 h-full">
+              <div className="text-sm text-neutral-500 pb-1.5 border-b border-neutral-100 max-h-36 overflow-y-auto">
                 <p>{isTicketOn.description}</p>
               </div>
               {/* stuffs */}
-              <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+              <div className="mt-1.5 flex items-center gap-2.5 flex-wrap">
                 {/* status */}
                 <div className="text-sm flex items-center gap-x-1 text-neutral-400">
                   <span>Status:</span>
@@ -302,6 +316,32 @@ export default function Tickets() {
                     }`}
                   >
                     <span>{isTicketOn.priority}</span>
+                  </div>
+                </div>
+                {/* createdAt */}
+                <div className="text-sm flex items-center gap-x-1 text-neutral-400">
+                  <span>Created at:</span>
+                  <div
+                    className={`border flex items-center gap-x-1 rounded-full px-1.5 text-xs py-0.5 border-sky-500
+                      `}
+                  >
+                    <LuClockArrowUp />
+                    <span>
+                      <GetDate date={isTicketOn.createdAt} />
+                    </span>
+                  </div>
+                </div>
+                {/* updated at */}
+                <div className="text-sm flex items-center gap-x-1 text-neutral-400">
+                  <span>Updated at:</span>
+                  <div
+                    className={`border flex items-center gap-x-1 rounded-full px-1.5 text-xs py-0.5 border-orange-500
+                      `}
+                  >
+                    <LuClockArrowUp className="-rotate-90" />
+                    <span>
+                      <GetDate date={isTicketOn.updatedAt} />
+                    </span>
                   </div>
                 </div>
               </div>
