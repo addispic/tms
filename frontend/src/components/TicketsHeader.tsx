@@ -1,8 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // icons
 import { IoIosAdd } from "react-icons/io";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { IoIosWarning } from "react-icons/io";
+// hooks
+import { useAppSelector, useAppDispatch } from "../hooks";
+// slices
+import {
+  addNewTicket,
+  isNewTicketAddingSelector,
+  isNewTicketAddingDoneSelector,
+  resetIsNewTicketAddingDone,
+  isTicketEditingOnSelector,
+  setIsTicketEditingOn,
+  editTicket,
+} from "../features/tickets/ticketsSlice";
 export default function TicketsHeader() {
   // states
   // local
@@ -21,6 +33,43 @@ export default function TicketsHeader() {
   const [error, setError] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  // slices
+  const isNewTicketAdding = useAppSelector(isNewTicketAddingSelector);
+  const isNewTicketAddingDone = useAppSelector(isNewTicketAddingDoneSelector);
+  const isTicketEditingOn = useAppSelector(isTicketEditingOnSelector);
+  // dispatch
+  const dispatch = useAppDispatch();
+
+  // effect
+  useEffect(() => {
+    if (isNewTicketAddingDone) {
+      dispatch(setIsTicketEditingOn(null))
+      setIsFormOpen(false);
+      setTitle("");
+      setStatus((prev) => ({ ...prev, selected: "", isOn: false }));
+      setPriority((prev) => ({ ...prev, selected: "", isOn: false }));
+      setDescription("");
+    }
+  }, [isNewTicketAddingDone]);
+
+  useEffect(() => {
+    if (isTicketEditingOn) {
+      setIsFormOpen(true);
+      setTitle(isTicketEditingOn.title);
+      setStatus((prev) => ({
+        ...prev,
+        selected: isTicketEditingOn.status,
+        isOn: false,
+      }));
+      setPriority((prev) => ({
+        ...prev,
+        selected: isTicketEditingOn.priority,
+        isOn: false,
+      }));
+      setDescription(isTicketEditingOn.description);
+    }
+  }, [isTicketEditingOn]);
+
   // form submit handler
   const formSubmitHandler = () => {
     if (!title || !status.selected || !priority.selected || !description) {
@@ -28,13 +77,26 @@ export default function TicketsHeader() {
       return;
     } else {
       setError("");
-      console.log({
-        title,
-        status: status.selected,
-        priority: priority.selected,
-        description,
-      });
-      // setIsFormOpen(false);
+      if (isTicketEditingOn) {
+        dispatch(
+          editTicket({
+            _id: isTicketEditingOn._id,
+            title,
+            status: status.selected,
+            priority: priority.selected,
+            description,
+          })
+        );
+      } else {
+        dispatch(
+          addNewTicket({
+            title,
+            status: status.selected,
+            priority: priority.selected,
+            description,
+          })
+        );
+      }
     }
   };
   return (
@@ -42,7 +104,10 @@ export default function TicketsHeader() {
       {/* add new tickets toggler */}
       <button
         className="flex items-center px-1.5 py-1 rounded-md overflow-hidden bg-neutral-100 transition-colors ease-in-out duration-300 text-neutral-500 hover:bg-neutral-200 hover:text-neutral-700 cursor-pointer"
-        onClick={() => setIsFormOpen(true)}
+        onClick={() => {
+          dispatch(resetIsNewTicketAddingDone());
+          setIsFormOpen(true);
+        }}
       >
         <IoIosAdd className="text-lg" />
         <span className="text-sm mr-1">add new</span>
@@ -71,11 +136,12 @@ export default function TicketsHeader() {
             {/* header */}
             <header className="flex items-center justify-between">
               <h3 className="text-sm text-neutral-700 border-b border-neutral-300 font-medium">
-                Add New Ticket
+                {isTicketEditingOn ? "Edit Ticket" : "Add New Ticket"}
               </h3>
               <button
                 className="w-[24px] aspect-square rounded-sm overflow-hidden flex items-center justify-center bg-neutral-100 text-neutral-500 text-lg cursor-pointer transition-colors ease-in-out duration-300 hover:bg-red-200 hover:text-red-500"
                 onClick={() => {
+                  dispatch(setIsTicketEditingOn(null));
                   setIsFormOpen(false);
                   setError("");
                   setTitle("");
@@ -210,10 +276,15 @@ export default function TicketsHeader() {
               </div>
               {/* button */}
               <button
+                disabled={isNewTicketAdding}
                 onClick={formSubmitHandler}
                 className="px-3 py-1 border-neutral-300 border rounded-md text-sm text-neutral-500 cursor-pointer transition-colors ease-in-out duration-200 hover:border-green-600 hover:bg-green-600 hover:text-white"
               >
-                Add Ticket
+                {isNewTicketAdding ? (
+                  <div className="w-[20px] aspect-square rounded-full border-2 border-neutral-400 border-r-transparent animate-spin" />
+                ) : (
+                  <>{isTicketEditingOn ? "Save Changes" : "Add Ticket"}</>
+                )}
               </button>
             </div>
           </div>

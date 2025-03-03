@@ -8,9 +8,16 @@ import cors from "cors";
 // config
 import db from "./config/db";
 
+// middlewares
+import protectedRoutes from "./middlewares/users.middleware";
+
 // routes
 // users
 import usersRoutes from "./routes/users.routes";
+// profiles
+import profilesRoute from "./routes/profiles.routes";
+// tickets
+import ticketsRoutes from "./routes/tickets.routes";
 // app
 const app: Express = express();
 // port
@@ -29,6 +36,10 @@ app.use(
 // routes
 // users
 app.use("/api/users", usersRoutes);
+// profiles
+app.use("/api/profiles", protectedRoutes(), profilesRoute);
+// tickets
+app.use("/api/tickets", protectedRoutes(), ticketsRoutes);
 
 // listening
 app.listen(PORT, async () => {

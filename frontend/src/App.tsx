@@ -12,7 +12,12 @@ import {
   isAuthenticatingSelector,
   userSelector,
   isAuthenticated,
+  getUsers,
 } from "./features/users/usersSlice";
+// profiles
+import { getProfiles } from "./features/profiles/profilesSlice";
+// tickets
+import {getTickets} from './features/tickets/ticketsSlice';
 
 // pages
 import Authentication from "./pages/Authentication";
@@ -23,6 +28,9 @@ interface Props {
   isAuthenticating: boolean;
   user: IUser | null;
   isAuthenticated: () => void;
+  getUsers: () => void;
+  getProfiles: () => void;
+  getTickets: () => void;
 }
 
 class App extends Component<Props> {
@@ -32,6 +40,9 @@ class App extends Component<Props> {
 
   componentDidMount(): void {
     this.props.isAuthenticated();
+    this.props.getUsers();
+    this.props.getProfiles();
+    this.props.getTickets();
   }
   render(): ReactNode {
     return (
@@ -57,6 +68,9 @@ const mapStateToProps = (state: RootState) => ({
 // Map dispatch to props
 const mapDispatchToProps = {
   isAuthenticated,
+  getUsers,
+  getProfiles,
+  getTickets
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

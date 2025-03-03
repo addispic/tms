@@ -2,11 +2,15 @@ import { configureStore } from "@reduxjs/toolkit";
 
 // reducers
 import users from "./features/users/usersSlice";
+import profiles from "./features/profiles/profilesSlice";
+import tickets from "./features/tickets/ticketsSlice";
 
 // store
 export const store = configureStore({
   reducer: {
     users,
+    profiles,
+    tickets,
   },
 });
 

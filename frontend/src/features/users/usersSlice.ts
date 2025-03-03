@@ -4,6 +4,20 @@ import axios, { isAxiosError } from "axios";
 // store
 import { RootState } from "../../store";
 
+// get users
+export const getUsers = createAsyncThunk("users/getUsers", async () => {
+  try {
+    const response = await axios.get("/api/users");
+    return response.data;
+  } catch (err) {
+    if (isAxiosError(err)) {
+      return err.response?.data;
+    } else {
+      return { error: "get users failed" };
+    }
+  }
+});
+
 // login
 export const login = createAsyncThunk(
   "users/login",
@@ -77,7 +91,9 @@ interface IInitialState {
   formId: "login" | "signup";
   isFormSubmitting: boolean;
   isAuthenticating: boolean;
+  isGetUsersFetching: boolean;
   user: IUser | null;
+  users: IUser[];
   error: IError | null;
 }
 
@@ -90,6 +106,8 @@ const initialState: IInitialState = {
   isAuthenticating: false,
   user: localUser ? JSON.parse(localUser) : null,
   error: null,
+  isGetUsersFetching: false,
+  users: []
 };
 
 // users slice
@@ -180,6 +198,19 @@ const usersSlice = createSlice({
       })
       .addCase(isAuthenticated.rejected, (state) => {
         state.isAuthenticating = false;
+      })
+      // get users
+      .addCase(getUsers.pending, (state) => {
+        state.isGetUsersFetching = true;
+      })
+      .addCase(getUsers.fulfilled, (state, action) => {
+        state.isGetUsersFetching = false;
+        if(action.payload.users){
+          state.users = action.payload.users;
+        }
+      })
+      .addCase(getUsers.rejected, (state) => {
+        state.isGetUsersFetching = false;
       });
   },
 });
@@ -195,5 +226,7 @@ export const isAuthenticatingSelector = (state: RootState) =>
   state.users.isAuthenticating;
 export const errorSelector = (state: RootState) => state.users.error;
 export const userSelector = (state: RootState) => state.users.user;
+export const usersSelector = (state: RootState) => state.users.users;
+export const isGetUsersFetchingSelector = (state: RootState) => state.users.isGetUsersFetching;
 // reducer
 export default usersSlice.reducer;
