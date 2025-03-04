@@ -38,7 +38,7 @@ export const login = async (req: Request, res: Response) => {
     res.cookie("tms-auth-session", generateToken(isUserExist._id), {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
+      sameSite: "lax",
       maxAge: MAX_AGE * 1000,
     });
     return res.status(200).json({
@@ -76,7 +76,7 @@ export const signup = async (req: Request, res: Response) => {
     // cookies
     res.cookie("tms-auth-session", generateToken(newUser._id), {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "lax",
       secure: true,
       maxAge: MAX_AGE * 1000,
     });

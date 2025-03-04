@@ -32,7 +32,7 @@ const protectedRoutes =
     res.cookie("tms-auth-session", generateToken(decodedToken._id), {
       maxAge: MAX_AGE * 1000,
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "lax",
       secure: true,
     });
     req._id = decodedToken._id;
