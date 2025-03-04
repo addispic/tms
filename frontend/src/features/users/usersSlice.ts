@@ -173,7 +173,6 @@ const usersSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isFormSubmitting = false;
-        console.log("payload action", action.payload);
         if (action.payload?.user) {
           state.error = null;
           state.user = action.payload.user;
@@ -276,6 +275,7 @@ const usersSlice = createSlice({
       })
       // logout
       .addCase(logout.fulfilled, (state, action) => {
+        console.log('payload action',action.payload)
         if (action.payload?.message === "user logged out successfully") {
           state.user = null;
           localStorage.removeItem("user");
