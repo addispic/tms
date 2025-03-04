@@ -69,6 +69,27 @@ export const isAuthenticated = createAsyncThunk(
   }
 );
 
+// update user
+export const updateUser = createAsyncThunk(
+  "users/updateUser",
+  async (data: {
+    _id: string;
+    role: "sub" | "normal";
+    status: "active" | "blocked";
+  }) => {
+    try {
+      const response = await axios.put(`/api/users/update/${data._id}`, data);
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        return err.response?.data;
+      } else {
+        return { error: "unexpected error has occurred during user updated" };
+      }
+    }
+  }
+);
+
 // user
 export type IUser = {
   _id: string;
@@ -95,6 +116,8 @@ interface IInitialState {
   user: IUser | null;
   users: IUser[];
   error: IError | null;
+  isUserUpdating: boolean;
+  isUserOn: IUser | null;
 }
 
 const localUser = localStorage.getItem("user");
@@ -107,7 +130,9 @@ const initialState: IInitialState = {
   user: localUser ? JSON.parse(localUser) : null,
   error: null,
   isGetUsersFetching: false,
-  users: []
+  users: [],
+  isUserUpdating: false,
+  isUserOn: null
 };
 
 // users slice
@@ -120,6 +145,9 @@ const usersSlice = createSlice({
     },
     resetError: (state) => {
       state.error = null;
+    },
+    resetIsUserOn: (state,action: PayloadAction<IUser |null>) => {
+      state.isUserOn = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -205,19 +233,37 @@ const usersSlice = createSlice({
       })
       .addCase(getUsers.fulfilled, (state, action) => {
         state.isGetUsersFetching = false;
-        if(action.payload.users){
+        if (action.payload.users) {
           state.users = action.payload.users;
         }
       })
       .addCase(getUsers.rejected, (state) => {
         state.isGetUsersFetching = false;
+      })
+      // update user
+      .addCase(updateUser.pending, (state) => {
+        state.isUserUpdating = true;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.isUserUpdating = false;
+        if (action.payload.updatedUser) {
+          state.isUserOn = action.payload.updatedUser
+          state.users[
+            state.users.findIndex(
+              (user) => user._id === action.payload.updatedUser._id
+            )
+          ] = action.payload.updatedUser;
+        }
+      })
+      .addCase(updateUser.rejected, (state) => {
+        state.isUserUpdating = false;
       });
   },
 });
 
 // exports
 // actions
-export const { formIdToggler, resetError } = usersSlice.actions;
+export const { formIdToggler, resetError, resetIsUserOn } = usersSlice.actions;
 // selectors
 export const formIdSelector = (state: RootState) => state.users.formId;
 export const isFormSubmittingSelector = (state: RootState) =>
@@ -227,6 +273,10 @@ export const isAuthenticatingSelector = (state: RootState) =>
 export const errorSelector = (state: RootState) => state.users.error;
 export const userSelector = (state: RootState) => state.users.user;
 export const usersSelector = (state: RootState) => state.users.users;
-export const isGetUsersFetchingSelector = (state: RootState) => state.users.isGetUsersFetching;
+export const isGetUsersFetchingSelector = (state: RootState) =>
+  state.users.isGetUsersFetching;
+export const isUserUpdatingSelector = (state: RootState) =>
+  state.users.isUserUpdating;
+export const isUserOnSelector = (state: RootState) => state.users.isUserOn
 // reducer
 export default usersSlice.reducer;

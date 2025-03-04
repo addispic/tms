@@ -23,6 +23,8 @@ interface IInitialState {
   isNewTicketAdding: boolean;
   isNewTicketAddingDone: boolean;
   isTicketEditingOn: ITicket | null;
+  isTicketDeleting: boolean;
+  isTicketDeletingDone: boolean;
 }
 
 // initial state
@@ -32,6 +34,8 @@ const initialState: IInitialState = {
   isNewTicketAdding: false,
   isNewTicketAddingDone: false,
   isTicketEditingOn: null,
+  isTicketDeleting: false,
+  isTicketDeletingDone: false,
 };
 
 // get tickets
@@ -97,6 +101,23 @@ export const editTicket = createAsyncThunk(
   }
 );
 
+// delete ticket
+export const deleteTicket = createAsyncThunk(
+  "tickets/deleteTicket",
+  async (_id: string) => {
+    try {
+      const response = await axios.delete(`/api/tickets/delete/${_id}`);
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        return err.response?.data;
+      } else {
+        return { error: "unexpected error has occurred during delete" };
+      }
+    }
+  }
+);
+
 // slice
 const ticketsSlice = createSlice({
   name: "tickets",
@@ -107,6 +128,9 @@ const ticketsSlice = createSlice({
     },
     setIsTicketEditingOn: (state, action: PayloadAction<ITicket | null>) => {
       state.isTicketEditingOn = action.payload;
+    },
+    resetIsTicketDeletingDone: (state) => {
+      state.isTicketDeletingDone = false;
     },
   },
   extraReducers: (builder) => {
@@ -160,12 +184,31 @@ const ticketsSlice = createSlice({
       })
       .addCase(editTicket.rejected, (state) => {
         state.isNewTicketAdding = false;
+      })
+      // delete ticket
+      .addCase(deleteTicket.pending, (state) => {
+        state.isTicketDeleting = true;
+      })
+      .addCase(deleteTicket.fulfilled, (state, action) => {
+        state.isTicketDeleting = false;
+        if (action.payload._id) {
+          state.isTicketDeletingDone = true;
+          state.tickets = state.tickets.filter(
+            (ticket) => ticket._id !== action.payload._id
+          );
+        }
+      })
+      .addCase(deleteTicket.rejected, (state) => {
+        state.isTicketDeleting = false;
       });
   },
 });
 // exports
-export const { resetIsNewTicketAddingDone, setIsTicketEditingOn } =
-  ticketsSlice.actions;
+export const {
+  resetIsNewTicketAddingDone,
+  setIsTicketEditingOn,
+  resetIsTicketDeletingDone,
+} = ticketsSlice.actions;
 export const isTicketsFetchingSelector = (state: RootState) =>
   state.tickets.isTicketsFetching;
 export const ticketsSelector = (state: RootState) => state.tickets.tickets;
@@ -175,4 +218,8 @@ export const isNewTicketAddingSelector = (state: RootState) =>
   state.tickets.isNewTicketAdding;
 export const isNewTicketAddingDoneSelector = (state: RootState) =>
   state.tickets.isNewTicketAddingDone;
+export const isTicketDeletingSelector = (state: RootState) =>
+  state.tickets.isTicketDeleting;
+export const isTicketDeletingDoneSelector = (state: RootState) =>
+  state.tickets.isTicketDeletingDone;
 export default ticketsSlice.reducer;

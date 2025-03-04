@@ -127,3 +127,27 @@ export const isAuthenticated = async (req: Request, res: Response) => {
       .json({ errors: { flag: "authentication checker failed" } });
   }
 };
+
+// update user
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const user = req._id;
+    const { _id } = req.params;
+    const { role, status } = req.body;
+    const isUserCan = await User.findById(user);
+    if (!isUserCan) {
+      return res.status(400).json({ error: "you are not exist" });
+    }
+    if (isUserCan.role !== "super") {
+      return res.status(400).json({ error: "unauthorized to update user" });
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      { role, status },
+      { new: true, runValidators: true }
+    );
+    return res.status(200).json({ updatedUser });
+  } catch (err) {
+    return res.status(400).json({ error: "update user error" });
+  }
+};

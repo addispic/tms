@@ -96,7 +96,7 @@ class Authentication extends Component<Props, State> {
           password: this.state.password,
         });
       } else if (!true && !fieldErrors.email) {
-        console.log("You can Rest Your password");
+        // console.log("You can Rest Your password");
       }
     } else {
       if (true) {
@@ -125,11 +125,10 @@ class Authentication extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     if (!prevProps.user && this.props.user) {
-      console.log("hello update");
       this.props.navigate("/");
     }
   }
-  
+
   render(): ReactNode {
     return (
       <div className="w-screen h-screen overflow-hidden flex items-center justify-center">

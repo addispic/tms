@@ -8,6 +8,7 @@ import {
   signup,
   logout,
   isAuthenticated,
+  updateUser,
 } from "../controllers/users.controllers";
 
 // middlewares
@@ -44,6 +45,11 @@ router.get(
     isAuthenticated(req, res);
   }
 );
+
+// update user
+router.put("/update/:_id", protectedRoutes(), (req: Request, res: Response) => {
+  updateUser(req, res);
+});
 
 // exports
 export default router;
