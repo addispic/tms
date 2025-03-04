@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 // icons
 import { MdSettingsSuggest } from "react-icons/md";
@@ -10,8 +10,17 @@ import { MdOutlineSupervisorAccount } from "react-icons/md";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { GoProjectSymlink } from "react-icons/go";
 import { MdOutlineEditNotifications } from "react-icons/md";
+import { FaArrowLeft } from "react-icons/fa";
+// hooks
+import {useAppSelector,useAppDispatch} from '../hooks'
+// slices
+import {userSelector,logout} from '../features/users/usersSlice'
+// utils
+import { leftSideBarToggler } from "../utils/togglers";
 export default function LeftSideBar() {
   // states
+  // slices
+  const user = useAppSelector(userSelector)
   // local
   const [links, setLinks] = useState({
     options: [
@@ -59,10 +68,18 @@ export default function LeftSideBar() {
       username: "Andualem Chane",
       message: "Order a new ticket",
     },
-  ]
+  ];
 
   // hooks
+  const dispatch = useAppDispatch()
   const navigate = useNavigate();
+
+  // effects
+  useEffect(()=>{
+    if(!user){
+      navigate('/authentication')
+    }
+  },[user])
 
   // link click handler
   const linkClickHandler = (linkItem: { text: string; path: string }) => {
@@ -75,16 +92,20 @@ export default function LeftSideBar() {
       });
       navigate(linkItem.path);
     }
+    leftSideBarToggler()
   };
   return (
-    <div className="w-64 shrink-0 flex">
+    <div
+      className="absolute z-50 transition-all ease-in-out duration-150 overflow-hidden w-0 shrink-0 flex md:relative left-0 top-0 h-full md:w-64"
+      id="left-sidebar"
+    >
       <div className="flex-1 flex p-2">
         <div className="bg-white rounded-xl overflow-hidden shadow-md flex-1 p-3 flex flex-col gap-y-10">
           <div className="flex-1 flex flex-col gap-y-10">
             {/* nav */}
             <div>
               {/* header */}
-              <header className="pb-1.5 border-b border-neutral-100">
+              <header className="pb-1.5 border-b border-neutral-100 flex items-center justify-between">
                 <NavLink
                   className={
                     "flex items-center gap-x-1.5 text-neutral-400 font-black transition-colors ease-in-out duration-300 hover:text-green-600"
@@ -94,6 +115,15 @@ export default function LeftSideBar() {
                   <PiBookOpenUserFill className="text-xl" />
                   <h3>TicketManagement</h3>
                 </NavLink>
+                {/* close button */}
+                <button
+                  className="w-6 md:hidden aspect-square rounded-sm bg-neutral-100 flex items-center justify-center text-neutral-500 text-lg cursor-pointer transition-colors ease-in-out duration-150 hover:bg-neutral-200 hover:text-neutral-700"
+                  onClick={() => {
+                    leftSideBarToggler();
+                  }}
+                >
+                  <FaArrowLeft />
+                </button>
               </header>
               {/* links */}
               <div className="mt-3">
@@ -166,7 +196,9 @@ export default function LeftSideBar() {
               <span className="text-sm relative z-10">Settings</span>
             </div>
             {/* logout */}
-            <div className="flex items-center gap-x-1.5 cursor-pointer relative text-neutral-500 p-1.5 rounded-sm overflow-hidden after:absolute after:left-0 after:bottom-0 after:h-full after:w-[30px] after:bg-neutral-200 after:rounded-r-sm after:transition-all after:ease-in-out after:duration-300 hover:after:w-full ">
+            <div className="flex items-center gap-x-1.5 cursor-pointer relative text-neutral-500 p-1.5 rounded-sm overflow-hidden after:absolute after:left-0 after:bottom-0 after:h-full after:w-[30px] after:bg-neutral-200 after:rounded-r-sm after:transition-all after:ease-in-out after:duration-300 hover:after:w-full " onClick={()=>{
+              dispatch(logout())
+            }}>
               <IoExit className="relative text-xl z-10" />
               <span className="text-sm relative z-10">Logout</span>
             </div>

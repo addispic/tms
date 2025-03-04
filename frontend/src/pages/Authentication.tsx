@@ -134,7 +134,7 @@ class Authentication extends Component<Props, State> {
       <div className="w-screen h-screen overflow-hidden flex items-center justify-center">
         <div className="flex items-center overflow-hidden rounded-2xl border border-neutral-300">
           {/* image */}
-          <div className="w-[400px] h-[400px] overflow-hidden bg-neutral-300">
+          <div className="md:w-[400px] h-[400px] overflow-hidden bg-neutral-300 transition-all ease-in-out duration-150 w-0">
             <img
               className="w-full h-full object-contain object-center"
               src="https://www.compufreak.co.za/wp-content/uploads/2016/10/Tickets_Management.png"
@@ -214,15 +214,14 @@ class Authentication extends Component<Props, State> {
                   />
                 </div>
                 {/* errors */}
-                {this.state.errors?.username?.length ||
-                  (this.props.error?.flag === "username" && (
-                    <div className="text-sm text-red-500">
-                      <p>{this.props.error.message}</p>
-                      {this.state.errors?.username?.map((err) => (
-                        <p key={err}>{err}</p>
-                      ))}
-                    </div>
-                  ))}
+                {this.state.errors?.username?.length && (
+                  <div className="text-sm text-red-500">
+                    <p>{this.props.error?.message}</p>
+                    {this.state.errors?.username?.map((err) => {
+                      return <p key={err}>{err}</p>;
+                    })}
+                  </div>
+                )}
               </div>
               {/* email */}
               {this.props.formId === "signup" && (
@@ -284,15 +283,14 @@ class Authentication extends Component<Props, State> {
                     />
                   </div>
                   {/* errors */}
-                  {this.state.errors?.email?.length ||
-                    (this.props.error?.flag === "email" && (
-                      <div className="text-sm text-red-500">
-                        <p>{this.props.error?.message}</p>
-                        {this.state.errors?.email?.map((err) => (
-                          <p key={err}>{err}</p>
-                        ))}
-                      </div>
-                    ))}
+                  {this.state.errors?.email?.length && (
+                    <div className="text-sm text-red-500">
+                      <p>{this.props.error?.message}</p>
+                      {this.state.errors?.email?.map((err) => (
+                        <p key={err}>{err}</p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
               {/* password */}
@@ -354,15 +352,14 @@ class Authentication extends Component<Props, State> {
                   />
                 </div>
                 {/* errors */}
-                {this.state.errors?.password?.length ||
-                  (this.props.error?.flag === "password" && (
-                    <div className="text-sm text-red-500">
-                      <p>{this.props.error?.message}</p>
-                      {this.state.errors?.password?.map((err) => (
-                        <p key={err}>{err}</p>
-                      ))}
-                    </div>
-                  ))}
+                {this.state.errors?.password?.length && (
+                  <div className="text-sm text-red-500">
+                    <p>{this.props.error?.message}</p>
+                    {this.state.errors?.password?.map((err) => (
+                      <p key={err}>{err}</p>
+                    ))}
+                  </div>
+                )}
               </div>
               {/* button */}
               <div className="my-5">

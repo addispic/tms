@@ -115,7 +115,7 @@ export default function TicketsHeader() {
       {/* form */}
       {isFormOpen && (
         <div className="fixed left-0 top-0 w-screen h-screen z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-5 rounded-sm w-96 relative">
+          <div className="bg-white p-5 rounded-sm w-72 sm:w-80 md:w-96 relative">
             {/* error */}
             <div
               className={`absolute flex items-center gap-x-1.5 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-max px-3 py-5 rounded-md border border-red-500 bg-white z-50 transition-transform ease-in-out duration-150 ${

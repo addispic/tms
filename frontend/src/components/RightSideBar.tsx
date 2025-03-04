@@ -75,7 +75,10 @@ export default function RightSideBar() {
   };
 
   return (
-    <div className="min-w-80 bg-neutral-50 flex">
+    <div
+      className="xl:w-80 transition-all ease-in-out duration-150 bg-neutral-50 flex xl:relative xl:right-0 xl:top-0 xl:h-full absolute h-full right-0 top-0 z-50 overflow-hidden w-0"
+      id="right-sidebar"
+    >
       <div className="flex-1 p-1.5 flex">
         <div className="flex-1/2 bg-white rounded-md overflow-hidden shadow-md">
           {/* profile */}

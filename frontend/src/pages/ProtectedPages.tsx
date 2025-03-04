@@ -17,7 +17,7 @@ export default function ProtectedPages() {
     }
   }, []);
   return (
-    <div className="w-screen h-screen overflow-hidden flex">
+    <div className="w-screen h-screen overflow-hidden flex relative">
       {/* left side bar */}
       <LeftSideBar />
       {/* right */}
@@ -25,7 +25,7 @@ export default function ProtectedPages() {
         {/* header */}
         <Header />
         {/* bottom */}
-        <div className="flex-1 flex">
+        <div className="flex-1 flex relative">
           {/* pages */}
           <div className="flex-1">
             <Outlet />

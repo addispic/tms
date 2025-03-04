@@ -90,6 +90,20 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+// logout
+export const logout = createAsyncThunk("users/logout", async () => {
+  try {
+    const response = await axios.get("/api/users/logout");
+    return response.data;
+  } catch (err) {
+    if (isAxiosError(err)) {
+      return err.response?.data;
+    } else {
+      return { error: "unexpected error has occurred during logout" };
+    }
+  }
+});
+
 // user
 export type IUser = {
   _id: string;
@@ -132,7 +146,7 @@ const initialState: IInitialState = {
   isGetUsersFetching: false,
   users: [],
   isUserUpdating: false,
-  isUserOn: null
+  isUserOn: null,
 };
 
 // users slice
@@ -146,8 +160,8 @@ const usersSlice = createSlice({
     resetError: (state) => {
       state.error = null;
     },
-    resetIsUserOn: (state,action: PayloadAction<IUser |null>) => {
-      state.isUserOn = action.payload
+    resetIsUserOn: (state, action: PayloadAction<IUser | null>) => {
+      state.isUserOn = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -189,6 +203,7 @@ const usersSlice = createSlice({
       .addCase(signup.fulfilled, (state, action) => {
         state.isFormSubmitting = false;
         if (action.payload.newUser) {
+          state.users.unshift(action.payload.newUser)
           state.user = action.payload.newUser;
           localStorage.setItem("user", JSON.stringify(action.payload.newUser));
           state.error = null;
@@ -247,7 +262,7 @@ const usersSlice = createSlice({
       .addCase(updateUser.fulfilled, (state, action) => {
         state.isUserUpdating = false;
         if (action.payload.updatedUser) {
-          state.isUserOn = action.payload.updatedUser
+          state.isUserOn = action.payload.updatedUser;
           state.users[
             state.users.findIndex(
               (user) => user._id === action.payload.updatedUser._id
@@ -257,6 +272,13 @@ const usersSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state) => {
         state.isUserUpdating = false;
+      })
+      // logout
+      .addCase(logout.fulfilled, (state, action) => {
+        if (action.payload?.message === "user logged out successfully") {
+          state.user = null;
+          localStorage.removeItem("user");
+        }
       });
   },
 });
@@ -277,6 +299,6 @@ export const isGetUsersFetchingSelector = (state: RootState) =>
   state.users.isGetUsersFetching;
 export const isUserUpdatingSelector = (state: RootState) =>
   state.users.isUserUpdating;
-export const isUserOnSelector = (state: RootState) => state.users.isUserOn
+export const isUserOnSelector = (state: RootState) => state.users.isUserOn;
 // reducer
 export default usersSlice.reducer;

@@ -105,10 +105,10 @@ export default function Tickets() {
               {dataTableType === "Members" ? (
                 <tr>
                   <td>Member</td>
-                  <td>Email</td>
+                  <td className="hidden sm::inline-block">Email</td>
                   <td>Join</td>
-                  <td>Role</td>
-                  <td>Account</td>
+                  <td className="hidden md:inline-block">Role</td>
+                  <td>Status</td>
                 </tr>
               ) : (
                 <tr>
@@ -116,8 +116,8 @@ export default function Tickets() {
                   <td>Title</td>
                   <td>Status</td>
                   <td>Priority</td>
-                  <td>Created at</td>
-                  <td>Updated at</td>
+                  <td className="hidden sm::inline-block">Created at</td>
+                  <td className="hidden lg:inline-block">Updated at</td>
                   <td>Actions</td>
                 </tr>
               )}
@@ -143,7 +143,7 @@ export default function Tickets() {
                           <span>{user.username}</span>
                         </div>
                       </td>
-                      <td>
+                      <td className="hidden sm::inline-block">
                         <span>{user.email}</span>
                       </td>
                       <td>
@@ -153,7 +153,7 @@ export default function Tickets() {
                           </span>
                         </div>
                       </td>
-                      <td>
+                      <td className="hidden md:inline-block">
                         <div>
                           <span
                             className={`${
@@ -193,7 +193,7 @@ export default function Tickets() {
                         <div className="w-[24px] aspect-square rounded-full overflow-hidden">
                           <GetProfile _id={ticketItem.user} flag="pro" />
                         </div>
-                        <span>
+                        <span className="hidden md:inline-block">
                           <GetUserInfo _id={ticketItem.user} flag="username" />
                         </span>
                       </div>
@@ -211,14 +211,14 @@ export default function Tickets() {
                         <span>{ticketItem.priority}</span>
                       </div>
                     </td>
-                    <td>
+                    <td className="hidden sm::inline-block">
                       <div>
                         <span>
                           <GetDate date={ticketItem.createdAt} />
                         </span>
                       </div>
                     </td>
-                    <td>
+                    <td className="hidden lg:inline-block">
                       <div>
                         <span>
                           <GetDate date={ticketItem.updatedAt} />
@@ -288,7 +288,7 @@ export default function Tickets() {
       {/* detail */}
       {isTicketOn && moreOptions.selected === "Detail" && (
         <div className="fixed left-0 top-0 w-screen h-screen z-[100] overflow-hidden bg-black/50 flex items-center justify-center">
-          <div className="w-[27rem] rounded-md overflow-hidden bg-white flex items-center relative">
+          <div className="w-[18rem] sm:w-[27rem] rounded-md overflow-hidden bg-white items-center relative flex flex-col sm:flex-row">
             {/* close detail */}
             <button
               className="absolute top-1 right-1 w-5 aspect-square rounded-sm bg-neutral-100 text-neutral-500 flex items-center justify-center transition-colors ease-in-out duration-200 hover:bg-red-200 hover:text-red-500 cursor-pointer"
@@ -305,7 +305,7 @@ export default function Tickets() {
               <IoMdClose />
             </button>
             {/* author detail */}
-            <div className="w-[35%] pb-3 self-start">
+            <div className="w-full sm:w-[35%] pb-3 self-start">
               {/* profile */}
               <div>
                 {/* bg */}
@@ -340,7 +340,7 @@ export default function Tickets() {
               </div>
             </div>
             {/* ticket detail */}
-            <div className="flex-1 shrink-0 p-1.5 ml-3 border-l border-neutral-200 h-full">
+            <div className="flex-1 shrink-0 p-1.5 sm:ml-3 pb-5 sm:pb-1.5 border-l border-transparent sm:border-neutral-200 h-full">
               <div className="text-sm text-neutral-500 pb-1.5 border-b border-neutral-100 max-h-36 overflow-y-auto">
                 <p>{isTicketOn.description}</p>
               </div>
@@ -410,7 +410,7 @@ export default function Tickets() {
       {/* delete */}
       {isTicketOn && moreOptions.selected === "Delete" && (
         <div className="fixed left-0 top-0 w-screen h-screen z-[100] overflow-hidden bg-black/50 flex items-center justify-center">
-          <div className="w-96 bg-white p-3 rounded-md overflow-hidden">
+          <div className="w-72 sm:w-80 md:w-96 bg-white p-3 rounded-md overflow-hidden">
             {/* ticket detail */}
             <div className="flex-1 shrink-0 p-1.5 h-full">
               <div className="text-sm text-neutral-500 pb-1.5 border-b border-neutral-100 max-h-36 overflow-y-auto">
