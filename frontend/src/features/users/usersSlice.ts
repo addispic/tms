@@ -173,7 +173,7 @@ const usersSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isFormSubmitting = false;
-        if (action.payload.user) {
+        if (action.payload?.user) {
           state.error = null;
           state.user = action.payload.user;
           localStorage.setItem("user", JSON.stringify(action.payload.user));
@@ -202,8 +202,8 @@ const usersSlice = createSlice({
       })
       .addCase(signup.fulfilled, (state, action) => {
         state.isFormSubmitting = false;
-        if (action.payload.newUser) {
-          state.users.unshift(action.payload.newUser)
+        if (action.payload?.newUser) {
+          state.users.unshift(action.payload.newUser);
           state.user = action.payload.newUser;
           localStorage.setItem("user", JSON.stringify(action.payload.newUser));
           state.error = null;
