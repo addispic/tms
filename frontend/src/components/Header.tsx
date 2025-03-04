@@ -10,7 +10,7 @@ import { RiMenuUnfoldLine } from "react-icons/ri";
 // hooks
 import {useAppSelector,useAppDispatch}  from '../hooks'
 // slices
-import {userSelector,logout} from '../features/users/usersSlice'
+import {userSelector,logout,formIdToggler} from '../features/users/usersSlice'
 // sub headers
 import TicketsHeader from "./TicketsHeader";
 import MembersHeader from "./MembersHeader";
@@ -87,6 +87,7 @@ export default function Header() {
           {/* logout button */}
           <button className="flex items-center gap-x-1.5 border border-neutral-300 rounded-full px-1.5 py-0.5 text-neutral-500 transition-colors ease-in-out duration-300 hover:border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200 cursor-pointer" onClick={()=>{
             dispatch(logout())
+            dispatch(formIdToggler('login'))
           }}>
             <IoExitOutline />
             <span className="text-sm hidden md:inline-block">Logout</span>

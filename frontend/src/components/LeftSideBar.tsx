@@ -12,15 +12,19 @@ import { GoProjectSymlink } from "react-icons/go";
 import { MdOutlineEditNotifications } from "react-icons/md";
 import { FaArrowLeft } from "react-icons/fa";
 // hooks
-import {useAppSelector,useAppDispatch} from '../hooks'
+import { useAppSelector, useAppDispatch } from "../hooks";
 // slices
-import {userSelector,logout} from '../features/users/usersSlice'
+import {
+  userSelector,
+  logout,
+  formIdToggler,
+} from "../features/users/usersSlice";
 // utils
 import { leftSideBarToggler } from "../utils/togglers";
 export default function LeftSideBar() {
   // states
   // slices
-  const user = useAppSelector(userSelector)
+  const user = useAppSelector(userSelector);
   // local
   const [links, setLinks] = useState({
     options: [
@@ -71,15 +75,15 @@ export default function LeftSideBar() {
   ];
 
   // hooks
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   // effects
-  useEffect(()=>{
-    if(!user){
-      navigate('/authentication')
+  useEffect(() => {
+    if (!user) {
+      navigate("/authentication");
     }
-  },[user])
+  }, [user]);
 
   // link click handler
   const linkClickHandler = (linkItem: { text: string; path: string }) => {
@@ -92,7 +96,7 @@ export default function LeftSideBar() {
       });
       navigate(linkItem.path);
     }
-    leftSideBarToggler()
+    leftSideBarToggler();
   };
   return (
     <div
@@ -196,9 +200,13 @@ export default function LeftSideBar() {
               <span className="text-sm relative z-10">Settings</span>
             </div>
             {/* logout */}
-            <div className="flex items-center gap-x-1.5 cursor-pointer relative text-neutral-500 p-1.5 rounded-sm overflow-hidden after:absolute after:left-0 after:bottom-0 after:h-full after:w-[30px] after:bg-neutral-200 after:rounded-r-sm after:transition-all after:ease-in-out after:duration-300 hover:after:w-full " onClick={()=>{
-              dispatch(logout())
-            }}>
+            <div
+              className="flex items-center gap-x-1.5 cursor-pointer relative text-neutral-500 p-1.5 rounded-sm overflow-hidden after:absolute after:left-0 after:bottom-0 after:h-full after:w-[30px] after:bg-neutral-200 after:rounded-r-sm after:transition-all after:ease-in-out after:duration-300 hover:after:w-full "
+              onClick={() => {
+                dispatch(logout());
+                dispatch(formIdToggler("login"));
+              }}
+            >
               <IoExit className="relative text-xl z-10" />
               <span className="text-sm relative z-10">Logout</span>
             </div>
