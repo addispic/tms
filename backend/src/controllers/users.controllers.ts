@@ -101,10 +101,14 @@ export const signup = async (req: Request, res: Response) => {
 // logout
 export const logout = (req: Request, res: Response) => {
   try {
-    res.cookie("tms-auth-session", "", { maxAge: -1 });
-    return res.status(200).json({ message: "user logged out successfully" });
+    // Loop through all cookies and clear them
+    Object.keys(req.cookies).forEach((cookie) => {
+      res.clearCookie(cookie, { path: "/" });
+    });
+
+    return res.status(200).json({ message: "User logged out successfully" });
   } catch (err) {
-    res.status(400).json({ errors: { flag: "logout error" } });
+    return res.status(500).json({ errors: { flag: "logout error" } });
   }
 };
 
