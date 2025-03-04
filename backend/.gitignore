@@ -1,2 +1,4 @@
 # node models
 node_modules
+# env
+.env*
