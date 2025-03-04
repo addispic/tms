@@ -33,10 +33,7 @@ app.use(
     credentials: true,
   })
 );
-// routes
-app.use("/", (req, res) => {
-  res.status(200).json({ message: "server running" });
-});
+
 // users
 app.use("/api/users", usersRoutes);
 // profiles
