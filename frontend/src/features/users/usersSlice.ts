@@ -276,7 +276,7 @@ const usersSlice = createSlice({
       // logout
       .addCase(logout.fulfilled, (state, action) => {
         console.log('payload action',action.payload)
-        if (action.payload?.message === "user logged out successfully") {
+        if (action.payload?.message === "User logged out successfully") {
           state.user = null;
           localStorage.removeItem("user");
         }
