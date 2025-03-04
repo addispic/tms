@@ -1,8 +1,6 @@
 // left side bar
 export const leftSideBarToggler = () => {
-  console.log("From The Function Itself");
   const leftSideBar = document.getElementById("left-sidebar");
-  console.log(leftSideBar);
   if (leftSideBar?.classList.contains("absolute")) {
     if (leftSideBar.classList.contains("w-0")) {
       leftSideBar.classList.remove("w-0");
