@@ -45,6 +45,7 @@ export default function Header() {
         <button
             className="w-6 md:hidden aspect-square rounded-sm bg-neutral-100 flex items-center justify-center text-neutral-500 text-lg cursor-pointer transition-colors ease-in-out duration-150 hover:bg-neutral-200 hover:text-neutral-700"
             onClick={() => {
+              console.log('From The Button Itself')
               leftSideBarToggler();
             }}
           >
