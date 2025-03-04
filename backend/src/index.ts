@@ -29,10 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://ticketmanagement-nine.vercel.app",
-    ],
+    origin: ["https://ticketmanagement-nine.vercel.app"],
     credentials: true,
   })
 );
