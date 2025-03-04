@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["https://ticketmanagement-nine.vercel.app"],
+    origin: ["https://ticketmanagement-p7l6.onrender.com"],
     credentials: true,
   })
 );
