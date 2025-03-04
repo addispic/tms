@@ -173,6 +173,7 @@ const usersSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isFormSubmitting = false;
+        console.log("payload action", action.payload);
         if (action.payload?.user) {
           state.error = null;
           state.user = action.payload.user;
